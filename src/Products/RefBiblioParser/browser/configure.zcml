@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="Products.RefBiblioParser">
+
+  <!-- ' Products.RefBiblioParser' Zope 3 browser layer -->
+  <interface name="Products.RefBiblioParser-theme"
+      interface="Products.RefBiblioParser.interfaces.IThemeSpecific"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+    />
+  <interface  name="Products.RefBiblioParser" interface="Products.RefBiblioParser.interfaces.ILayer" />
+
+  <!-- Viewlets registration -->
+
+  <!-- Zope 3 browser views -->
+  <!--
+    <browser:page
+        layer="Products.RefBiblioParser.interfaces.ILayer"
+        for="Products.RefBiblioParser.interface.mycontent"
+        name="MyView"
+        class=".view.MyView"
+        allowed_interface=".view.IMyView"
+        permission="zope2.View"
+      />
+  -->
+
+  <!-- Zope 3 browser resources -->
+
+  <!-- Resource directory -->
+  <browser:resourceDirectory
+      name="Products.RefBiblioParser"
+      directory="resources"
+      layer="Products.RefBiblioParser.interfaces.ILayer"
+    />
+
+
+  <!-- vim:set ft=xml: -->
+</configure>

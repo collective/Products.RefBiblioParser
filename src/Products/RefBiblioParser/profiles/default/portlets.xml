@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlets
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="Products.RefBiblioParser">
+<!--
+  <portlet
+      addview="Products.RefBiblioParser.browser.portlet.Portlet"
+      title = "Products.RefBiblioParser portlet"
+      title = "Add a Products.RefBiblioParser portlet"
+      remove="True"
+    />
+-->
+</portlets>

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="Products.RefBiblioParser">
+  <!-- Include direct package dependencies -->
+  <genericsetup:registerProfile
+      name="qi"
+      title="Products Policy QI"
+      directory="profiles/qi"
+      description="Turn a Plone site into the Products QIINFO site."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:registerProfile
+      name="default"
+      title="Products.RefBiblioParser"
+      directory="profiles/default"
+      description="Install the Products.RefBiblioParser addon on this plone site."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:registerProfile
+      title="Products.RefBiblioParser uninstall" 
+      name="uninstall"
+      description="Uninstall the Products.RefBiblioParser addon on tbis plone site."
+      directory="profiles/uninstall"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
+  <genericsetup:importStep
+      name="Products_RefBiblioParser setupVarious"
+      title="various setup for Products.RefBiblioParser "
+      description="description"
+      handler="Products.RefBiblioParser.setuphandlers.setupVarious">
+    <depends name="content"/>
+  </genericsetup:importStep>
+  <!-- migration steps -->
+  <genericsetup:importStep
+      name="Products_RefBiblioParser setupQi"
+      title="Quick Installer products dependencies setup for Products.RefBiblioParser"
+      description="description"
+      handler="Products.RefBiblioParser.setuphandlers.setupQi">
+    <depends name="content"/>
+  </genericsetup:importStep> 
+  <!-- -->
+  <utility factory=".app_config.HiddenProducts" name="Products.hiddenproducts"/>
+  <utility factory=".app_config.HiddenProfiles" name="Products.hiddenprofiles"/> 
+  <include package=".migrations"/>
+</configure> 

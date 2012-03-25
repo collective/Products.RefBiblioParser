@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<object name="portal_skins" allow_any="False" cookie_persistence="False" >
+<!-- activate this statement to include a zope2 skin directory
+  <object name="Products_RefBiblioParser_custom"
+      meta_type="Filesystem Directory View"
+      directory="Products.RefBiblioParser:skins/Products_RefBiblioParser_custom"/>
+  <skin-path name="Products.RefBiblioParser" based-on="Sunburst Theme">
+    <layer name="Products_RefBiblioParser_custom"
+        insert-after="custom"/>
+  </skin-path>
+-->
+</object> 
