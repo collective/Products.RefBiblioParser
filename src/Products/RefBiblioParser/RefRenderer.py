@@ -1,13 +1,4 @@
 # -*- coding: utf-8 -*-
-############################################################################
-#                                                                          #
-#             copyright (c) 2004 ITB, Humboldt-University Berlin           #
-#             written by: Raphael Ritz, r.ritz@biologie.hu-berlin.de       #
-#                                                                          #
-############################################################################
-
-"""RefRenderer class"""
-
 # Python stuff
 import os
 
@@ -16,11 +7,20 @@ from zope.component import getMultiAdapter
 from zope.component import queryAdapter
 from zope.interface import implements
 from zope.publisher.browser import TestRequest
+try:
+    from Products.CMFBibliographyAT.interface import IBibliographicItem
+    HAVE_CMFBIB_AT = True
+except:
+    HAVE_CMFBIB_AT = False
+
 
 # CMF stuff
 from Products.CMFCore.utils import getToolByName
+from Products.CMFBibliographyAT.adapters.export import BiliographicExportAdapter
+from bibliograph.core.interfaces import IBibliographicReference
 
 # Bibliography stuff
+from bibliograph.core.interfaces import IBibliography
 from bibliograph.rendering.renderers.base import BaseRenderer
 from bibliograph.rendering.interfaces import IReferenceRenderer, IBibliographyRenderer
 from bibliograph.core.interfaces import IBibliographyExport
@@ -31,7 +31,7 @@ class RefRendererView(BaseRenderer):
     specific Ref renderer
     """
     implements(IReferenceRenderer)
-    file_extension = 'REF'
+    file_extension = 'ref'
     def render(self, title_force_uppercase=False, omit_fields=[],
               msdos_eol_style=None, # not used
               resolve_unicode=None, # not used
@@ -40,7 +40,10 @@ class RefRendererView(BaseRenderer):
         """
         renders a BibliographyEntry object in Ref format
         """
+
         entry = self.context
+        if isinstance(entry, BiliographicExportAdapter):
+            entry = entry.context
         ref = {}
         ref['A'] = "%A " + entry.Authors(sep="\n%A ",
                                          lastsep="\n%A ",
@@ -215,17 +218,19 @@ class RefRendererView(BaseRenderer):
         return a_URLs[:-5]
 
 class RefRenderer(UtilityBaseClass):
-    """An implementation of IBibliographyRenderer that renders to ref.
+    """
+    An implementation of IBibliographyRenderer that renders to ref.
     """
     implements(IBibliographyRenderer)
     default_encoding = u''
-    __name__ = u'REF'
+    __name__ = u'ref'
     source_format = u''
-    target_format = u'REF'
-    description = u'Export to native REF format'
+    target_format = u'ref'
+    description = u'Export to native ref format'
     view_name = u'ref'
-    available = True
-    enabled = True
+    available = enabled = True
+    format = {'name' : 'ref',
+              'extension':'ref'}
 
     def render(self, objects,
                      title_force_uppercase=False,
@@ -233,23 +238,21 @@ class RefRenderer(UtilityBaseClass):
                      msdos_eol_style=False,
                      omit_fields_mapping={}):
         """ Export a bunch of bibliographic entries in ref format"""
-        if isinstance(objects, (list, tuple)):
-            context = objects[0]
-        else:
-            context = objects
+        request = TestRequest()
+        objects = IBibliography(objects, objects)
+        if IBibliographicItem.providedBy(objects):
+            entries = [objects]
+            found = True
 
-        if not IBibliographyExport.providedBy(context):
+        if not found:
             try:
-                context = context.aq_parent
+                # We want the values from a dictionary-ish/IBibliography object
+                entries = objects.itervalues()
             except AttributeError:
-                pass
-
-
-        object = entry = self.context
-        bib_tool = getToolByName(object, 'portal_bibliography')
-        ref_types = bib_tool.getReferenceTypes()
-        if object.portal_type in ref_types:
-            return self.renderEntry(object)
+                # Otherwise we just iterate over what is presumably something
+                # sequence-ish.
+                entries = iter(objects)
+        rendered = []
         for obj in entries:
             ref = queryAdapter(obj, interface=IBibliographicReference,
                                     name=self.__name__)
@@ -263,19 +266,13 @@ class RefRenderer(UtilityBaseClass):
             # do rendering for entry
             view = getMultiAdapter((ref, request), name=self.view_name)
             omit_fields = omit_fields_mapping.get(ref.publication_type, [])
-            bibtex_string = view.render(title_force_uppercase=title_force_uppercase,
-                                        omit_fields=omit_fields
-                                        )
-            rendered.append(bibtex_string)
+            ref_string = view.render(
+                title_force_uppercase=title_force_uppercase,
+                omit_fields=omit_fields)
+            rendered.append(ref_string)
 
         rendered = ''.join(rendered)
         if msdos_eol_style:
             rendered = rendered.replace('\n', '\r\n')
         return rendered
-        if object.isPrincipiaFolderish:
-            entries = object.contentValues(ref_types)
-            rendered = [self.renderEntry(entry) \
-                        for entry in entries]
-            return ''.join(rendered)
-        return ''
 

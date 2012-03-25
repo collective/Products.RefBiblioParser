@@ -21,9 +21,15 @@ cat >> base.cfg << EOF
 
 [buildout]
 auto-checkout += Products.CMFBibliographyAT
+    bibliograph.core     
+    bibliograph.parsing  
+    bibliograph.rendering
 sources-dir = \${buildout:directory}/src.mrdeveloper
 [sources]
-Products.CMFBibliographyAT = svn http://svn.plone.org/svn/collective/bibliograph.core/trunk
+Products.CMFBibliographyAT = svn http://svn.plone.org/svn/collective/Products.CMFBibliographyAT/trunk
+bibliograph.core      = svn http://svn.plone.org/svn/collective/bibliograph.core/trunk
+bibliograph.parsing   = svn http://svn.plone.org/svn/collective/bibliograph.parsing/trunk
+bibliograph.rendering = svn http://svn.plone.org/svn/collective/bibliograph.rendering/trunk
 
 EOF
 # vim:set et sts=4 ts=4 tw=80: 

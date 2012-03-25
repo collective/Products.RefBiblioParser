@@ -26,19 +26,29 @@
   <include file="profiles.zcml" />
   <i18n:registerTranslations directory="locales" />
   <!-- activate this statement to include a zope2 skin directory
-  <cmf:registerDirectory
-       name="Products_RefBiblioParser_custom"/>
-  -->
+    <cmf:registerDirectory
+        name="Products_RefBiblioParser_custom"/>
+    -->
   <utility
       provides="bibliograph.parsing.interfaces.IBibliographyParser"
       factory=".RefParser.RefParser"
       name="ref"
       permission="zope.Public" />
 
+  <browser:view
+      for="bibliograph.core.interfaces.IBibliographicReference"
+      name="ref"
+      permission="zope2.View"
+      class=".RefRenderer.RefRendererView"/>
+  <browser:view
+      for="bibliograph.core.interfaces.IBibliographyExport"
+      name="ref"
+      permission="zope2.View"
+      class=".RefRenderer.RefRendererView"/>
   <utility
       provides="bibliograph.rendering.interfaces.IBibliographyRenderer"
       factory=".RefRenderer.RefRenderer"
       name="ref"
-      permission="zope.Public" />  
+      permission="zope.Public" />
 </configure>
 <!-- vim:set ft=xml: -->

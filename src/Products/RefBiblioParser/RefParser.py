@@ -1,17 +1,4 @@
 # -*- coding: utf-8 -*-
-##########################################################################
-#                                                                        #
-#              copyright (c) 2004 Belgian Science Policy                 #
-#                                 and contributors                       #
-#                                                                        #
-#    maintainers: David Convent, david.convent_AT_naturalsciences.be     #
-#                 Louis Wannijn, louis.wannijn_AT_naturalsciences.be     #
-#                                                                        #
-##########################################################################
-
-""" A parser for CMFBibliographyAT that knows about the Ref format
-"""
-
 import re, sys
 from zope.interface import implements
 
@@ -19,14 +6,12 @@ from zope.interface import implements
 from bibliograph.parsing.parsers.base import BibliographyParser
 
 class RefParser(BibliographyParser):
-    """ specific parser to process input in Ref-format
+    """ specific parser to process input in Ref format
     """
-
     meta_type = "Ref Parser"
     available = True
-    file_extension = 'REF'
-    format = {'name':'Ref',
-              'extension':'REF'}
+    file_extension = 'ref'
+    format = {'name':'ref', 'extension':'ref'}
 
     def __init__(self,
                  id = 'ref',
@@ -40,7 +25,6 @@ class RefParser(BibliographyParser):
         self.title = title
         self.setDelimiter(delimiter)
         self.setPattern(pattern, re.M)
-    # Here we need to provide 'checkFormat' and 'parseEntry'
 
     # rewrite
     def checkFormat(self, source):
@@ -131,8 +115,8 @@ class RefParser(BibliographyParser):
             elif key == '%B': 
                 result['booktitle'] = str(value).strip()
                 for i in ['acte', 'proceedings', 'akte']:
-                    if i in str(value).strip().lower(): result['publication_type'] = 'InproceedingsReference'
-                if not result.has_key('publication_type'): result['publication_type'] = 'InbookReference'
+                    if i in str(value).strip().lower(): result['reference_type'] = 'InproceedingsReference'
+                if not result.has_key('reference_type'): result['reference_type'] = 'InbookReference'
             elif key == '%C': result['city'] = str(value).strip()
             elif key == '%D': 
                 date = str(value).strip().lower()
@@ -151,12 +135,12 @@ class RefParser(BibliographyParser):
             elif key == '%I': result['publisher'] = str(value).strip()
             elif key == '%J': 
                 result['journal'] = str(value).strip()
-                result['publication_type'] = 'ArticleReference'
+                result['reference_type'] = 'ArticleReference'
             elif key == '%K': 
-                if result.has_key('subject'): 
-                    result['subject'] += '\n' + '\n'.join([key.strip() for key in str(value).split(',')])
+                if result.has_key('keywords'): 
+                    result['keywords'] += '\n' + '\n'.join([key.strip() for key in str(value).split(',')])
                 else:
-                    result['subject'] = '\n'.join([key.strip() for key in str(value).split(',')])
+                    result['keywords'] = '\n'.join([key.strip() for key in str(value).split(',')])
             elif key == '%N': result['number'] = str(value).strip()
             elif key == '%O': 
                 if result.has_key('abstract'):
@@ -167,24 +151,24 @@ class RefParser(BibliographyParser):
             elif key == '%R': 
                 for i in ['acte', 'proceedings', 'akte']:
                     if i in str(value).strip().lower(): 
-                        result['publication_type'] = 'ProceedingsReference'
+                        result['reference_type'] = 'ProceedingsReference'
                         if result.has_key('note'):
                             result['note'] += "\n %s" % str(value).strip()
                         else:
                             result['note'] = "%s" % str(value).strip()
                 for i in ['thesis', 'eindwerk', 'thèse']:
                     if i in str(value).strip().lower(): 
-                        result['publication_type'] = 'MastersthesisReference'
+                        result['reference_type'] = 'MastersthesisReference'
                         if result.has_key('note'):
                             result['note'] += "\n %s" % str(value).strip()
                         else:
                             result['note'] = "%s" % str(value).strip()
                 for i in ['raport', 'report', 'verslag']:
                     if i in str(value).strip().lower(): 
-                        result['publication_type'] = 'TechreportReference'
+                        result['reference_type'] = 'TechreportReference'
                         result['type'] = str(value).strip()
-                if not result.has_key('publication_type'): 
-                        result['publication_type'] = 'BookReference'
+                if not result.has_key('reference_type'): 
+                        result['reference_type'] = 'BookReference'
                         if result.has_key('note'):
                             result['note'] += "\n %s" % str(value).strip()
                         else:
@@ -202,8 +186,8 @@ class RefParser(BibliographyParser):
                              sys.exc_info()[1])
             return result
 
-        if not result.has_key('publication_type'): 
-            result['publication_type'] = 'BookReference'
+        if not result.has_key('reference_type'): 
+            result['reference_type'] = 'BookReference'
 
         return result
 
