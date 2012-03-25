@@ -4,6 +4,8 @@ Introduction
 
 .. contents::
 
+This product is a REF parser for CMFBibliographyAT
+
 Credits
 ========
 Companies
@@ -20,9 +22,12 @@ Authors
 ------------
 
 - kiorky  <kiorky@cryptelium.net>
+- David Convent: david.convent_AT_naturalsciences.be
+- Louis Wannijn: louis.wannijn_AT_naturalsciences.be  
 
 Contributors
 -----------------
 
 
+ 
  

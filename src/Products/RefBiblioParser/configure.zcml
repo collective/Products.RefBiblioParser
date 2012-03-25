@@ -25,5 +25,16 @@
   <cmf:registerDirectory
        name="Products_RefBiblioParser_custom"/>
   -->
+  <utility
+      provides="bibliograph.parsing.interfaces.IBibliographyParser"
+      factory=".RefParser.RefParser"
+      name="ref"
+      permission="zope.Public" />
+
+  <utility
+      provides="bibliograph.rendering.interfaces.IBibliographyRenderer"
+      factory=".RefRenderer.RefRenderer"
+      name="ref"
+      permission="zope.Public" /> 
 </configure>
 <!-- vim:set ft=xml: -->
