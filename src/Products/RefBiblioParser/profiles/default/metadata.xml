@@ -5,6 +5,5 @@
   <!-- QuickInstalled dependencies -->
       <dependency>profile-Products.RefBiblioParser:qi</dependency>
   <!-- GenericSetup dependencies -->
-      <dependency>profile-plone.app.dexterity:default</dependency>
  </dependencies>
 </metadata>

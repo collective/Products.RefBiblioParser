@@ -11,10 +11,14 @@
   <include package="Products.Five" file="configure.zcml"/>
   <include package="Products.CMFCore" file="permissions.zcml" />
   <!-- Load the ZCML configuration for the Products.RefBiblioParser package.-->
-  <!--with_ploneproduct_dexterity -->
-  <include package="plone.app.dexterity" file="meta.zcml"/>
-  <!--with_ploneproduct_dexterity -->
-  <include package="plone.app.dexterity" file="configure.zcml"/>
+  <!--with_ploneproduct_cmfbibliographyat -->
+  <include package="bibliograph.core" file="configure.zcml"/>
+  <!--with_ploneproduct_cmfbibliographyat -->
+  <include package="bibliograph.parsing" file="configure.zcml"/>
+  <!--with_ploneproduct_cmfbibliographyat -->
+  <include package="bibliograph.rendering" file="configure.zcml"/>
+  <!--with_ploneproduct_cmfbibliographyat -->
+  <include package="Products.CMFBibliographyAT" file="configure.zcml"/>
   <five:registerPackage package="." initialize=".initialize" />
   <!-- activate to customize the dashboard-->
   <!-- <adapter factory=".dashboard.MyPortalDefaultDashboard"/>-->
@@ -35,6 +39,6 @@
       provides="bibliograph.rendering.interfaces.IBibliographyRenderer"
       factory=".RefRenderer.RefRenderer"
       name="ref"
-      permission="zope.Public" /> 
+      permission="zope.Public" />  
 </configure>
 <!-- vim:set ft=xml: -->

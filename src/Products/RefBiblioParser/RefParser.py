@@ -12,18 +12,11 @@
 """ A parser for CMFBibliographyAT that knows about the Ref format
 """
 
-# Python stuff
 import re, sys
-
-# Zope stuff
-from Globals import InitializeClass
-from App.Dialogs import MessageDialog
-
 from zope.interface import implements
 
 # Bibliography stuff
 from bibliograph.parsing.parsers.base import BibliographyParser
-
 
 class RefParser(BibliographyParser):
     """ specific parser to process input in Ref-format
@@ -215,17 +208,3 @@ class RefParser(BibliographyParser):
         return result
 
 
-# Class instanciation
-#InitializeClass(RefParser)
-
-   
-#def manage_addRefParser(self, REQUEST=None):
-#    """ """
-#    try:
-#        self._setObject('ref', RefParser())
-#    except:
-#        return MessageDialog(
-#            title='Bibliography tool warning message',
-#            message='The parser you attempted to add already exists.',
-#            action='manage_main')    
-#    return self.manage_main(self, REQUEST)

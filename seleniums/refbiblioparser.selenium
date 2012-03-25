@@ -57,6 +57,21 @@
 	<td></td>
 </tr>
 <tr>
+	<td>selectWindow</td>
+	<td>null</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//div[@id='collectivegenericploneaddongroups']/h2[8]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>name=with_ploneproduct_dexterity</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>name=http_port</td>
 	<td>23823</td>

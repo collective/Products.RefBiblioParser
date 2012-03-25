@@ -66,9 +66,15 @@ class ProductsRefbiblioparserLayer(PloneSandboxLayer):
         # ----------------------------------------------------------------------
         # Import all our python modules required by our packages
         # ---------------------------------------------------------------------
-        #with_ploneproduct_dexterity
-        import plone.app.dexterity
-        self.loadZCML('configure.zcml', package=plone.app.dexterity)
+        #with_ploneproduct_cmfbibliographyat
+        import bibliograph.core
+        self.loadZCML('configure.zcml', package=bibliograph.core)
+        import bibliograph.parsing
+        self.loadZCML('configure.zcml', package=bibliograph.parsing)
+        import bibliograph.rendering
+        self.loadZCML('configure.zcml', package=bibliograph.rendering)
+        import Products.CMFBibliographyAT
+        self.loadZCML('configure.zcml', package=Products.CMFBibliographyAT)
 
         # -----------------------------------------------------------------------
         # Load our own RefBiblioParser
