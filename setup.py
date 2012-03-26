@@ -28,7 +28,7 @@ setup(
     name=name,
     namespace_packages=[         'Products',
     ],
-    version='1.2',
+    version='1.3.dev0',
     description='Addon for CMFBibliographyAT to parse/export REF files.',
     long_description=long_description,
     classifiers=classifiers,
