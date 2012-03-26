@@ -30,7 +30,7 @@ setup(
     namespace_packages=[         'Products',
     ],
     version=version,
-    description='Project %s',
+    description='Addon for CMFBibliographyAT to parse/export REF files.',
     long_description=long_description,
     classifiers=classifiers,
     keywords='ref biblio parser',
