@@ -3,12 +3,6 @@ Changelog
 
 1.2 (unreleased)
 ----------------
-
-- Nothing changed yet.
-
-
-1.1 (2012-03-26)
-----------------
 - bugfix: unitialized value
 
 

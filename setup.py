@@ -2,7 +2,6 @@ import os, sys
 
 from setuptools import setup, find_packages
 
-version = u'1.1'
 
 def read(*rnames):
     return open(
@@ -29,7 +28,7 @@ setup(
     name=name,
     namespace_packages=[         'Products',
     ],
-    version=version,
+    version = '1.2dev',
     description='Addon for CMFBibliographyAT to parse/export REF files.',
     long_description=long_description,
     classifiers=classifiers,
