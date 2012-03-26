@@ -240,6 +240,7 @@ class RefRenderer(UtilityBaseClass):
         """ Export a bunch of bibliographic entries in ref format"""
         request = TestRequest()
         objects = IBibliography(objects, objects)
+        found = False
         if IBibliographicItem.providedBy(objects):
             entries = [objects]
             found = True

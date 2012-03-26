@@ -4,7 +4,7 @@ Changelog
 1.1 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- bugfix: unitialized value
 
 
 1.0 (2012-03-26)
