@@ -5,6 +5,7 @@ from zope.interface import implements
 # Bibliography stuff
 from bibliograph.parsing.parsers.base import BibliographyParser
 
+reflags = re.X|re.S|re.U
 class RefParser(BibliographyParser):
     """ specific parser to process input in Ref format
     """
@@ -32,9 +33,9 @@ class RefParser(BibliographyParser):
         is this my format?
         """
         teststring = source[:200].lower()
-        ai = teststring.find('%T')
-        ei = teststring.find('%A')
-        di = teststring.find('%D')
+        ai = teststring.find('%t')
+        ei = teststring.find('%a')
+        di = teststring.find('%d')
         if ai + ei + di > -2:
             return 1
         else:
@@ -62,44 +63,44 @@ class RefParser(BibliographyParser):
     def parseEntry(self, entry):
         """
         parses a single entry
-        
+
         returns a dictionary to be passed to
         BibliographyEntry's edit method
         """
         result = {}
-        
+
         tokens = self.pattern.finditer(entry)
 
         # some defaults
         result['note'] = 'automatic ref import'
         for line in tokens:
           try:
-        
+
             key=line.group(1)
             value=line.group(2)
             if key == '%A':
-                
+
                 value=value.replace('.-','-dot-')
                 value=value.replace('.','. ')
                 value=value.replace('-dot','.-')
-                
+
                 lastauthor=''
                 if ' & ' in value:
                     lastauthor = value.split(' & ',2)[-1]
                     value = value.split(' & ',2)[0]
-                if ' et ' in value.lower(): 
+                if ' et ' in value.lower():
                     lastauthor = value.split(' et ',2)[-1]
                     value = value.split(' et ',2)[0]
-                if ' en ' in value.lower(): 
+                if ' en ' in value.lower():
                     lastauthor = value.split(' en ',2)[-1]
                     value = value.split(' en ',2)[0]
                 authlist= value.split(',')
                 if not lastauthor == '':
                     authlist.append(lastauthor)
-                    
+
                 for auth in authlist:
                     raw = auth.strip().split(' ',3)
-                    if raw[0].lower() in ['van', 'von', 'du', 'de'] and len(raw)>1: 
+                    if raw[0].lower() in ['van', 'von', 'du', 'de'] and len(raw)>1:
                          raw[0] = raw[0]+' '+raw[1]
                          raw.pop(1)
                     lname = raw[0].strip()
@@ -112,62 +113,96 @@ class RefParser(BibliographyParser):
                              ,'lastname': lname
                              }
                     result.setdefault('authors',[]).append(adict)
-            elif key == '%B': 
+            elif key == '%B':
                 result['booktitle'] = str(value).strip()
                 for i in ['acte', 'proceedings', 'akte']:
                     if i in str(value).strip().lower(): result['reference_type'] = 'InproceedingsReference'
                 if not result.has_key('reference_type'): result['reference_type'] = 'InbookReference'
             elif key == '%C': result['city'] = str(value).strip()
-            elif key == '%D': 
+            elif key == '%D':
                 date = str(value).strip().lower()
                 if date == 'in press':
-                    if result.has_key('note'): 
+                    if result.has_key('note'):
                         result['note'] += "\n %s" % str(value).strip()
-                    else: 
+                    else:
                         result['note'] += "\n %s" % str(value).strip()
                 elif not (date in ['n. d.','s. d.']):
                     result['publication_year'] = str(value).strip()
-            elif key == '%E': 
+            elif key == '%E':
                 if not result.has_key('editor'):
                     result['editor'] = str(value).strip()
                 else:
                     result['editor'] += ', %s' % str(value).strip()
             elif key == '%I': result['publisher'] = str(value).strip()
-            elif key == '%J': 
+            elif key == '%J':
                 result['journal'] = str(value).strip()
                 result['reference_type'] = 'ArticleReference'
-            elif key == '%K': 
-                if result.has_key('keywords'): 
+            elif key == '%K':
+                if result.has_key('keywords'):
                     result['keywords'] += '\n' + '\n'.join([key.strip() for key in str(value).split(',')])
                 else:
                     result['keywords'] = '\n'.join([key.strip() for key in str(value).split(',')])
             elif key == '%N': result['number'] = str(value).strip()
-            elif key == '%O': 
-                if result.has_key('abstract'):
+            elif key == '%O':
+                ap = 'CMFAuthors homepage:'
+                parser = re.compile("A:::"
+                                    "(?P<author>.*)///"
+                                    "(?P<url>.*)", reflags)
+                up = 'PloneExportedFrom:'
+                uparser = re.compile("A:::"
+                                    "(?P<author>.*)///"
+                                    "(?P<url>.*)", reflags)
+                if up in value:
+                    continue # skip, this is just a comment
+                elif ap in value:
+                    token = [a.strip() 
+                            for a in value.split(ap) 
+                            if a.strip()][0]
+                    keys = [a 
+                            for a in token.split(' and ')
+                            if a.strip()]
+                    for k in keys:
+                        m = parser.match(k)
+                        if m:
+                            infos = m.groupdict()
+                            for ai in result.get(
+                                'authors', []):
+                                ak = ''
+                                for i in (
+                                    'lastname', 
+                                    'firstname', 
+                                    'middlename'):
+                                    aval=ai.get(i, '').strip()
+                                    if aval:
+                                        ak += " "+aval
+                                ak = ak.strip()
+                                if ak == infos['author']:
+                                    ai['homepage'] = infos['url']
+                elif result.has_key('abstract'):
                     result['abstract'] += "\n %s" % str(value).strip()
                 else:
                     result['abstract'] = "%s" % str(value).strip()
             elif key == '%P': result['pages'] = str(value).strip()
-            elif key == '%R': 
+            elif key == '%R':
                 for i in ['acte', 'proceedings', 'akte']:
-                    if i in str(value).strip().lower(): 
+                    if i in str(value).strip().lower():
                         result['reference_type'] = 'ProceedingsReference'
                         if result.has_key('note'):
                             result['note'] += "\n %s" % str(value).strip()
                         else:
                             result['note'] = "%s" % str(value).strip()
                 for i in ['thesis', 'eindwerk', 'thèse']:
-                    if i in str(value).strip().lower(): 
+                    if i in str(value).strip().lower():
                         result['reference_type'] = 'MastersthesisReference'
                         if result.has_key('note'):
                             result['note'] += "\n %s" % str(value).strip()
                         else:
                             result['note'] = "%s" % str(value).strip()
-                for i in ['raport', 'report', 'verslag']:
-                    if i in str(value).strip().lower(): 
+                for i in ['raport', 'rapport', 'report', 'verslag']:
+                    if i in str(value).strip().lower():
                         result['reference_type'] = 'TechreportReference'
                         result['type'] = str(value).strip()
-                if not result.has_key('reference_type'): 
+                if not result.has_key('reference_type'):
                         result['reference_type'] = 'BookReference'
                         if result.has_key('note'):
                             result['note'] += "\n %s" % str(value).strip()
@@ -175,7 +210,7 @@ class RefParser(BibliographyParser):
                             result['note'] = "%s" % str(value).strip()
             elif key == '%T': result['title'] = str(value).strip()
             elif key == '%V': result['volume'] = str(value).strip()
-            elif key == '%X': 
+            elif key == '%X':
                 if result.has_key('note'):
                     result['note'] += "\n %s" % str(value).strip()
                 else:
@@ -186,7 +221,7 @@ class RefParser(BibliographyParser):
                              sys.exc_info()[1])
             return result
 
-        if not result.has_key('reference_type'): 
+        if not result.has_key('reference_type'):
             result['reference_type'] = 'BookReference'
 
         return result

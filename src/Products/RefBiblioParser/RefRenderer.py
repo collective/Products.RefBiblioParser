@@ -45,23 +45,30 @@ class RefRendererView(BaseRenderer):
         if isinstance(entry, BiliographicExportAdapter):
             entry = entry.context
         ref = {}
-        ref['A'] = "%A " + entry.Authors(sep="\n%A ",
-                                         lastsep="\n%A ",
-                                         abbrev=0,
-                                         lastnamefirst=1)
+        ref['A'] = ""
+        authors = entry.getAuthors()
+        lauthors = len(authors)-1
+        for i, item in enumerate(authors):
+            ref['A'] += "%A"
+            infos = dict(item)
+            for k in 'lastname', 'firstname', 'middlename':
+                if k in infos:
+                    ref['A'] += ' %s' % infos[k]
+            if i != lauthors:
+                ref['A'] += '\n'
 
         value = self.AuthorURLs(entry)
         if value:
-          ref['O'] = "\n%O " + '\n%O '.join(''.join(value).split('\n'))
+            ref['O'] = "\n%O CMFAuthors homepage: " + '\n%O CMFAuthors homepage: '.join(''.join(value).split('\n'))
 
         value = entry.getPublication_year().strip()
         if value:
           if value!='':
-            ref['D'] = "\n%D" + value.strip()
+            ref['D'] = "\n%D " + value.strip()
           elif 'in press' in entry.getAbstract():
-            ref['D'] = "in press"
+            ref['D'] = "\n%D in press"
           else:
-            ref['D'] = "n.d."
+            ref['D'] = "\n%D n.d."
 
         try:
           value = entry.getType()
@@ -182,15 +189,19 @@ class RefRendererView(BaseRenderer):
               value += key.strip() + '\n'
           ref['X'] = "/n%X " + value.strip()
 
+        # useless & painful to remove
         try:
-          value = entry.getURL()
+            value = entry.getURL()
         except:
-          value =""
+            value =""
+
+        comment= "PloneExportedFrom:"
         if value:
-          if not ref.has_key('O') :
-            ref['O'] = "\n%O " + '\n%O '.join(''.join(value).split('\n'))
-          else:
-            ref['O'] += "\n%O " + '\n%O '.join(''.join(value).split('\n'))
+            ref['O'] = ref.get('O', '') + (
+                '\n%O '
+                + comment
+                + (' ').join(value.split('\n'))
+            )
 
         try:
           value = entry.getSubject()
@@ -209,12 +220,18 @@ class RefRendererView(BaseRenderer):
         helper method for bibtex output"""
         a_list = entry.getAuthorList()
         a_URLs = ''
-        for a in a_list:
+        for i, a in enumerate(a_list):
+            url = a.get('homepage', ' ')
+            name = ("%s%s%s" % (
+                a.get('lastname', '')+ " ",
+                a.get('firstname', '')+ " ",
+                a.get('middlename', '')+ " ",
+            )).strip()
             url = a.get('homepage', ' ')
             if url != ' ':
-              a_URLs += "%s and " % url
+                a_URLs += "A:::%s///%s and " % (name, url)
         if a_URLs != '':
-          a_URLs = a_URLs[:-5]
+            a_URLs = a_URLs[:-5]
         return a_URLs[:-5]
 
 class RefRenderer(UtilityBaseClass):
