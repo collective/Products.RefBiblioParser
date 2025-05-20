@@ -21,7 +21,7 @@ Companies
 Authors
 ------------
 
-- kiorky  <kiorky@cryptelium.net>
+- Makina Corpus <freesoftware@makina-corpus.com>
 - David Convent: david.convent_AT_naturalsciences.be
 - Louis Wannijn: louis.wannijn_AT_naturalsciences.be  
 
